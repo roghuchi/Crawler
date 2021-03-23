@@ -5,28 +5,6 @@ const dotenv = require('dotenv');
 require('dotenv/config');
 const bodyParser = require("body-parser");
 
-
-const axios = require("axios");
-const cheerio = require("cheerio");
-const url = "http://localhost/crawler/";
-
-get_data(url)
-    .then((res) => {
-        const html = res.data;
-        const $ = cheerio.load(html)
-        const result = $('ul')
-        result.each(function(){
-            let followers = $(this).find('li').text()
-            console.log(followers);
-        });
-    })
-
-async function get_data(url) {
-    let response = await axios(url).catch(err => console.error("Connection error", err))
-    return response;
-};
-
-
 dotenv.config();
 
 app.use(express.json());

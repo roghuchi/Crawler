@@ -2,17 +2,39 @@ const router = require('express').Router();
 const SearchModel = require('../models/search.model');
 
 
+const axios = require("axios");
+const cheerio = require("cheerio");
+const url = "http://localhost/crawler/";
+
+
+async function get_data(url) {
+    let response = await axios(url).catch(err => console.error("Connection error", err))
+    return response;
+};
+
+
+
 //add
 router.route('/add').post((req, res) => {
-    const search_name = req.body.search_name;
-    const num_followers = req.body.num_followers;
 
-    const newSearh = new SearchModel({ search_name, num_followers })
+    get_data(url)
+        .then((res) => {
+            const html = res.data;
+            const $ = cheerio.load(html)
+            const result = $('li')
+            result.each(function () {
+                let followers = $(this).text()
+                const search_name = followers;
+                const num_followers = followers;
+                const newSearh = new SearchModel({ search_name, num_followers })
 
-    newSearh.save()
-        .then(() => res.json('Search was added.'))
+                newSearh.save()
+            })
+        })
+        .then(result => res.send("list was added"))
         .catch(err => res.status(400).json('Error:' + err))
 })
+
 
 //list
 router.route("/list/:id").get((req, res) => {
